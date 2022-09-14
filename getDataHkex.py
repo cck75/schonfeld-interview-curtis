@@ -29,7 +29,6 @@ def async_get_all(url, payloads):
 def create_request(stockCode, start, end):
     url = "https://www3.hkexnews.hk/sdw/search/searchsdw.aspx"
     today = datetime.today().strftime("%Y/%m/%d")
-    print(start, end)
     dates = pd.date_range(start, end)
     payloads = [
         {'__EVENTTARGET': 'btnSearch',
@@ -51,6 +50,7 @@ def parse_data(data):
     """
     result = []
     for d, date in data:
+        print(d)
         if "</table>" in d:
             df = pd.read_html(d)[0]
             total = d.split('summary-value">')[1].split("</div>")[0]
