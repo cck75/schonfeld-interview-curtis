@@ -12,7 +12,8 @@ I used Flask, Dash and Plotly to implement the server on port `8080`
 `getDataHkex.py` 
 
 includes all the function used to make http request and parse response data.
-module uses asyncio to make parallel calls for data, but because of rate limit issue. request is throttled at 0.05s per request
+module uses asyncio to make parallel calls for data, but because of rate limit issue, 
+request is throttled at 0.05s per request
 
 `application.py`
 
@@ -39,9 +40,8 @@ and update the graph and corresponding table with shareholding history
 
 ![Alt text](asset/trend_table.png?raw=true "Front Page")
 
-Shareholding table can filter through and sort each columns and rows
-use the search bar to filter through columns. 
-Search can be done using single word, or comma separated values for multiple searches
+Shareholding table can be sorted and filtered by value. Columns could be filtered by using the search bar. 
+Search can be done using single word, or comma separated values for multiple searches.
 Table is paginated, click through to see more history
 
 ![Alt text](asset/trend_table_filter.png?raw=true "Front Page")
