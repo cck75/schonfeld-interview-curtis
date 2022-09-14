@@ -35,7 +35,9 @@ application = app.server
     State('trans_data_table', 'data'),
     State('trans_data_table', 'columns'),
     prevent_initial_call=True,)
-def update_trend_plot(n_clicks, trans_clicks, stock, start, end, data, columns, search, raw, thshld, trans_data, trans_col):
+def update_trend_plot(n_clicks, trans_clicks, stock,
+                      start, end, data, columns, search,
+                      raw, thshld, trans_data, trans_col):
     empty = (None, pd.DataFrame(), [], "", pd.DataFrame(), pd.DataFrame(), [])
     triggered_id = ctx.triggered_id
     print(triggered_id)

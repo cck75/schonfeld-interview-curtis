@@ -7,9 +7,10 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
-def async_get_all(url,payloads):
+def async_get_all(url, payloads):
     """
-    performs asynchronous get requests
+    performs asynchronous get requests from url and payload
+    requests are capped at 0.05s pre request to avoid rate limit
     """
     async def get_all(url, payloads):
         async with aiohttp.ClientSession() as session:
@@ -41,6 +42,13 @@ def create_request(stockCode, start, end):
     return async_get_all(url, payloads)
 
 def parse_data(data):
+    """
+    parses data from response, % total share holding is calculated
+    using Total number of Issued Shares/Warrants/Units (last updated figure)
+    instead of directly from table, because of rounding accuracy
+    :param data: response data from hhtp request
+    :return: dataframe containing shareholding information
+    """
     result = []
     for d, date in data:
         if "</table>" in d:
@@ -60,6 +68,13 @@ def parse_data(data):
     return df
 
 def trend_plot(stockCode, start, end):
+    """
+    function used to get data for task 1
+    :param stockCode:
+    :param start:
+    :param end:
+    :return: dataframe with index date, columns participantID of top 10 shareholders
+    """
     resp = create_request(stockCode, start, end)
     df = parse_data(resp)
     plot = df.pivot_table(values="shareholding", columns="id", index="date")
@@ -67,6 +82,18 @@ def trend_plot(stockCode, start, end):
     return plot[keep]
 
 def transaction_finder(stockCode, start, end, thsld):
+    """
+    function to get and process data for task 2
+    function looks at daily change in share holdings
+    and if the change is shareholdings are larger than thsld
+    then transaction will be recorded
+    :param stockCode:
+    :param start:
+    :param end:
+    :param thsld: float in % 1% will be 1
+    :return: plot10 (data for task1), output (dataframe containing all transactions
+             that satisfy thershold requirement)
+    """
     thsld = thsld/100.
     resp = create_request(stockCode, start, end)
     df = parse_data(resp)
@@ -78,6 +105,7 @@ def transaction_finder(stockCode, start, end, thsld):
     diff = pct_shs.diff()
     id_name_map = df.set_index("id")["name"].drop_duplicates().to_dict()
     output = []
+    # loop through daily to search for all valid transactions
     for i,r in diff.iterrows():
         trans = r[r.abs()>thsld]
         if len(trans) > 0:
