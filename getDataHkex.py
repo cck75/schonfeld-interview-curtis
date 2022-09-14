@@ -43,6 +43,7 @@ def create_request(stockCode, start, end):
 def parse_data(data):
     result = []
     for d, date in data:
+        print(d)
         if "</table>" in d:
             df = pd.read_html(d)[0]
             total = d.split('summary-value">')[1].split("</div>")[0]
