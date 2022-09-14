@@ -30,6 +30,29 @@ main script to run program, contains the DASH code to generate html elements and
  * Running on http://0.0.0.0:8080/  (Press CTRL+C to quit)
 ```
 ## Webapp Visualization
+![Alt text](asset/trend_plot.png?raw=true "Front Page")
+
+There are two buttons: `Plot` and `Transaction Finder`
+
+`Plot` will take input `Stock Code, Start Date, End Date`
+and update the graph and corresponding table with shareholding history
+
+![Alt text](asset/trend_table.png?raw=true "Front Page")
+
+Shareholding table can filter through and sort each columns and rows
+use the search bar to filter through columns. 
+Search can be done using single word, or comma separated values for multiple searches
+Table is paginated, click through to see more history
+
+![Alt text](asset/trend_table_filter.png?raw=true "Front Page")
+
+`Transaction Finder` will take input from required fields:
+`Stock Code, Start Date (max 1 year history), End Date, Threshold`
+this function will update all the charts, including from `Plot` and also add the data into Transaction history table
+Table is paginated, click through to see more history
+
+![Alt text](asset/trans_table.png?raw=true "Front Page")
+
 
 
 
