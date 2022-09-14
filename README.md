@@ -9,12 +9,12 @@ A demo is hosted at AWS: https://zfzqc2myqu.us-east-1.awsapprunner.com/
 
 I used Flask, Dash and Plotly to implement the server on port `8080`
 
-`getDataHkex` 
+`getDataHkex.py` 
 
 includes all the function used to make http request and parse response data.
 module uses asyncio to make parallel calls for data, but because of rate limit issue. request is throttled at 0.05s per request
 
-`application`
+`application.py`
 
 main script to run program, contains the DASH code to generate html elements and callback functions to support
 
