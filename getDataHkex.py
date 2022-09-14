@@ -28,7 +28,6 @@ def async_get_all(url,payloads):
 def create_request(stockCode, start, end):
     url = "https://www3.hkexnews.hk/sdw/search/searchsdw.aspx"
     today = datetime.today().strftime("%Y/%m/%d")
-    print(start, end)
     dates = pd.date_range(start, end)
     payloads = [
         {'__EVENTTARGET': 'btnSearch',
