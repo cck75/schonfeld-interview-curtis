@@ -12,6 +12,7 @@ import dash_bootstrap_components as dbc
 
 app = Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.title = "Curtis Kwan"
+application = app.server
 
 @app.callback(
     Output('trend-plot', 'figure'),
@@ -169,5 +170,6 @@ app.layout = html.Div(style={"padding": "25px"}, children=[
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    #app.run_server(debug=True)
+    application.run(host='0.0.0.0', port='8080')
 
