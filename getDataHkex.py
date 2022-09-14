@@ -45,13 +45,16 @@ def parse_data(data):
     for d, date in data:
         if "</table>" in d:
             df = pd.read_html(d)[0]
+            total = d.split('summary-value">')[1].split("</div>")[0]
+            df["total"] = int(total.replace(",",""))
             df["date"] = pd.to_datetime(date).date()
             result.append(df)
     df = pd.concat(result)
-    for c in df.columns[:-1]:
+    for c in df.columns[:-2]:
         df[c] = df[c].apply(lambda x: x.split(": ")).apply(lambda x: x[1] if len(x) > 1 else None)
     df.Shareholding = df.Shareholding.str.replace(',', '').astype(float)
-    df.columns = ["id", "name", "address", "shareholding", "pct total", "date"]
+    df.columns = ["id", "name", "address", "shareholding", "pct total", "total", "date"]
+    df["pct total calc"] = df.shareholding / df.total
     df["pct total"] =  df["pct total"].str.replace("%", "").astype(float) / 100
 
     return df
@@ -64,36 +67,42 @@ def trend_plot(stockCode, start, end):
     return plot[keep]
 
 def transaction_finder(stockCode, start, end, thsld):
-    resp = create_request(stockCode, start, end, thsld)
+    thsld = thsld/100.
+    resp = create_request(stockCode, start, end)
     df = parse_data(resp)
     plot = df.pivot_table(values="shareholding", columns="id", index="date")
     keep = plot.iloc[-1, :].dropna().sort_values(ascending=False).index[:10]
     plot_10 = plot[keep]
-    pct_shs = df.pivot_table(values="pct total", columns="id", index="date")
+    pct_shs = df.pivot_table(values="pct total calc", columns="id", index="date")
     shares = df.pivot_table(values="shareholding", columns="id", index="date")
     diff = pct_shs.diff()
     id_name_map = df.set_index("id")["name"].drop_duplicates().to_dict()
     output = []
     for i,r in diff.iterrows():
-        trans = r[r.abs()>0]
+        trans = r[r.abs()>thsld]
         if len(trans) > 0:
             def _po_trade(data):
-                name = [id_name_map.get(n) for n in data]
-                data = ", ".join(data)
+                name = [id_name_map.get(n) for n in data.index]
+                ids = ", ".join(data.index)
                 name = ", ".join(name)
-                return name, data
+                amount = ", ".join(data.apply("{0:.3%}".format).values)
+                return name, ids, amount
 
-            add = _po_trade(trans[trans>0].index)
-            sub = _po_trade(trans[trans<0].index)
+            add = _po_trade(r[r>0])
+            sub = _po_trade(r[r<0])
 
             trans = trans.to_frame()
             trans.columns = ["% shs exchanged"]
             trans["date"] = r.name
-            trans["potential trades"] = trans.iloc[:,0].apply(lambda x: add if x<0 else sub)
+            trans["name"] = trans.index.map(id_name_map.get)
+            trans[["potential name", "potential id", "trans % shs"]] = \
+                pd.DataFrame(trans.iloc[:,0].apply(lambda x: add if x<0 else sub).tolist(), index=trans.index)
             trans = trans.reset_index()
+            trans = trans.sort_values("% shs exchanged", ascending=False)
             output.append(trans)
-        output = pd.concat(output)
-        return plot_10, output
+    output = pd.concat(output)
+    output = output[['date','id', 'name', '% shs exchanged', 'potential name', 'potential id', "trans % shs"]]
+    return plot_10, output
 
 
 
