@@ -86,6 +86,7 @@ def update_trend_plot(n_clicks, trans_clicks,
 
     table_col = [{"name": i, "id": i, "format": Format().group(True), "type":'numeric'} for i in df.columns]
     if triggered_id == 'filter-id':
+        print(triggered_id)
         cols = df.columns
         if search is None or search == "":
             table_col = [{"name": i, "id": i, "format": Format().group(True), "type": 'numeric'}

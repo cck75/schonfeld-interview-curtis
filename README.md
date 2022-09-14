@@ -4,6 +4,9 @@
 
 This includes my submission to the single page webapp for HKEX CCASS data visualization.
 
+A demo is hosted at AWS: https://zfzqc2myqu.us-east-1.awsapprunner.com/
+
+
 I used Flask, Dash and Plotly to implement the server on port `8080`
 
 `getDataHkex` 
@@ -26,5 +29,7 @@ main script to run program, contains the DASH code to generate html elements and
  * Debug mode: off
  * Running on http://0.0.0.0:8080/  (Press CTRL+C to quit)
 ```
+## Webapp Visualization
+
 
 
